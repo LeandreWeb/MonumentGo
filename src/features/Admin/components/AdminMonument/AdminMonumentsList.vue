@@ -1,0 +1,58 @@
+<script setup lang="ts">
+import AdminMonumentSearchSort from "./AdminMonumentSearchSort.vue";
+import AdminMonument from "./AdminMonument.vue";
+import MonumentsPagination from "./MonumentsPagination.vue";
+
+import { useMonuments } from "@/shared/stores";
+import { reactive } from "vue";
+
+const monumentStore = useMonuments();
+
+const isCollapsed = reactive({ value: true });
+
+</script>
+
+<template>
+  <main class="col" id="monuments-list">
+
+    <a href="#" class="title" data-bs-toggle="collapse" data-bs-target="#collapse-monuments-list"
+      @click="isCollapsed.value = !isCollapsed.value">
+      <header class="card-header d-flex justify-content-between align-items-center mb-2">
+        <h2>Liste des Monuments</h2>
+        <i class="icon-control fa" :class="{ 'fa-chevron-down': !isCollapsed.value, 'fa-chevron-up': isCollapsed.value }">
+        </i>
+      </header>
+    </a>
+
+    <div id="collapse-monuments-list" :class="{ 'collapse show': isCollapsed.value, 'collapse': !isCollapsed.value }">
+      <AdminMonumentSearchSort />
+      <div v-if="monumentStore.getMonuments">
+        <AdminMonument v-for="monument, index in monumentStore.getMonuments" :key="monument.sku" :monument="monument"
+          :index="index" />
+      </div>
+      <div v-else class="row">
+        <h3 class="text-center mt-3">Aucun résultat</h3>
+      </div>
+      <MonumentsPagination />
+    </div>
+
+  </main>
+</template>
+
+<style lang="scss" scoped>
+#collapse-monuments-list {
+  background-color: var(--light-gray-background);
+  border-radius: 15px;
+  padding: 1.5rem;
+}
+
+.card-header {
+  padding: 0.8rem 0.8rem 0.4rem;
+  transition: all .2s ease-in;
+  border-radius: 20px;
+
+  &:hover {
+    background-color: var(--light-gray-background);
+  }
+}
+</style>
